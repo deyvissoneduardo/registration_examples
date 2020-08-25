@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "941872102393",
+    "firebase_url": "https://controlededadastro.firebaseio.com",
+    "project_id": "controlededadastro",
+    "storage_bucket": "controlededadastro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:941872102393:android:1894507d884dd012f39b28",
+        "android_client_info": {
+          "package_name": "com.example.controle_de_cadastro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "941872102393-gp73gtqrditg7oi6ptpmjj6tu2ongb2s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.controle_de_cadastro",
+            "certificate_hash": "9f2261fff80ea38f90475d1b4cd04ac44299f7d5"
+          }
+        },
+        {
+          "client_id": "941872102393-55q4cbothhibj5n7ci0ftm6vmi1b67ng.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXRR7YqiavSex5CclaDQMXMkfSbW7ANKY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "941872102393-55q4cbothhibj5n7ci0ftm6vmi1b67ng.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
