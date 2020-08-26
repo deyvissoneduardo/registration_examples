@@ -50,6 +50,9 @@ class _CadastrosState extends State<Cadastros> {
                 ),
                 title: 'Album Viagens',
                 subTitle: 'com Validações',
+                onTapItem: (){
+                  Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_ALBUNS_VIAGENS);
+                },
               ),
             ],
           ),

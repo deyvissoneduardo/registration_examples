@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:controle_de_cadastro/config/database/Firebase.dart';
-import 'package:controle_de_cadastro/models/Usuario.dart';
+import 'package:controle_de_cadastro/models/Usuario/Usuario.dart';
 import 'package:controle_de_cadastro/routes/routes.dart';
 import 'package:controle_de_cadastro/widgets/CarregandoWidget.dart';
-import 'package:controle_de_cadastro/widgets/ListViewWidget.dart';
+import 'package:controle_de_cadastro/views/Usuario/Widget/ListViewWidgetUsuario.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,7 +33,7 @@ class _ListaUsuarioState extends State<ListaUsuario> {
     _idUsuario = usuarioLoagado.uid;
   }
 
-  /** recupera dados do anuncio **/
+  /** recupera dados do usuario **/
   Future<Stream<QuerySnapshot>> _adcionarListener() async {
     await _recuperaDadosUsuario();
 
@@ -45,20 +45,6 @@ class _ListaUsuarioState extends State<ListaUsuario> {
 
     stream.listen((dados) {
       _controller.add(dados);
-    });
-  }
-
-  _remover(String idContato) {
-    _banco
-        .collection(Firebase.COLECAO_USUARIOS)
-        .document(_idUsuario)
-        .collection(Firebase.COLECAO_CONTATOS)
-        .document(idContato)
-        .delete()
-        .then((_) {
-      CarregandoWidget(
-        texto: 'Excluindo',
-      );
     });
   }
 
@@ -82,9 +68,6 @@ class _ListaUsuarioState extends State<ListaUsuario> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Lista de Usuarios'),
-          actions: [
-
-          ],
         ),
         floatingActionButton: FloatingActionButton(
           elevation: 7,
@@ -124,7 +107,7 @@ class _ListaUsuarioState extends State<ListaUsuario> {
                       Usuario usuario =
                           Usuario.fromDocumentsSnapshot(documentSnapshot);
 
-                      return ListViewWidget(
+                      return ListViewWidgetUsuario(
                         usuario: usuario,
                         icon: Icon(
                           Icons.phone,

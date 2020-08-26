@@ -2,6 +2,9 @@ import 'package:controle_de_cadastro/views/Cadastros.dart';
 import 'package:controle_de_cadastro/views/Login/Login.dart';
 import 'package:controle_de_cadastro/views/Usuario/ListaUsuario.dart';
 import 'package:controle_de_cadastro/views/Usuario/CadastroUsuario.dart';
+import 'package:controle_de_cadastro/views/Viagens/AlbunsViagens.dart';
+import 'package:controle_de_cadastro/views/Viagens/CadastroViagem.dart';
+import 'package:controle_de_cadastro/views/Viagens/DetalhesViagens.dart';
 import 'package:flutter/material.dart';
 
 class RouteGenerate {
@@ -10,6 +13,9 @@ class RouteGenerate {
   static const String ROTA_CADASTROS = '/Cadastros';
   static const String ROTA_CADASTRO_USUARIO = '/CadastroUsuario';
   static const String ROTA_LISTA_USUARIO = '/ListaUsuario';
+  static const String ROTA_ALBUNS_VIAGENS = '/AlbunsViagens';
+  static const String ROTA_CADASTRO_VIAGEM = '/CadastroViagem';
+  static const String ROTA_DETALHES_VIAGEM = '/DetalhesViagens';
 
   static Route<dynamic> genetareRoutes(RouteSettings settings) {
     final args = settings.arguments;
@@ -26,9 +32,13 @@ class RouteGenerate {
         return MaterialPageRoute(builder: (_) => CadastroUsuario());
       case ROTA_LISTA_USUARIO:
         return MaterialPageRoute(builder: (_) => ListaUsuario());
-      /** produto **/
-      /** empresa **/
       /** viagem **/
+      case ROTA_CADASTRO_VIAGEM:
+        return MaterialPageRoute(builder: (_) => CadastroViagem());
+      case ROTA_ALBUNS_VIAGENS:
+        return MaterialPageRoute(builder: (_) => AlbunsViagens());
+      case ROTA_DETALHES_VIAGEM:
+        return MaterialPageRoute(builder: (_) => DetalhesViagens(args));
       default:
         _erroRota();
     }

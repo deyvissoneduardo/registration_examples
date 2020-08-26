@@ -11,6 +11,7 @@ class Usuario {
   List _fotos;
   String _password;
 
+  /** contrutores **/
   Usuario();
 
   Usuario.fromDocumentsSnapshot(DocumentSnapshot documentSnapshot) {
@@ -31,6 +32,8 @@ class Usuario {
     this.idUsuario = anuncios.document().documentID;
   }
 
+
+  /** metodo usado para salvar no firebase **/
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       'name': this.name,
@@ -41,6 +44,8 @@ class Usuario {
     };
     return map;
   }
+
+  /** getrs e setrs **/
 
   List get fotos => _fotos;
 

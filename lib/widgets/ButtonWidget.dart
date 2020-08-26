@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 class ButtonWidget extends StatelessWidget {
   final String text;
   final Color corText;
+  final Color corButton;
   final VoidCallback onPressed;
 
   ButtonWidget(
-      {@required this.text, this.corText = Colors.white, this.onPressed});
+      {@required this.text, this.corText = Colors.white,
+        this.corButton,
+        this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,7 @@ class ButtonWidget extends StatelessWidget {
         this.text,
         style: TextStyle(color: this.corText, fontSize: 20),
       ),
-      color: temaPadrao.primaryColor,
+      color: this.corButton,
       padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
       onPressed: this.onPressed,
     );

@@ -1,14 +1,14 @@
-import 'package:controle_de_cadastro/models/Usuario.dart';
+import 'package:controle_de_cadastro/models/Usuario/Usuario.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ListViewWidget extends StatelessWidget {
+class ListViewWidgetUsuario extends StatelessWidget {
   Usuario usuario;
   VoidCallback onTapItem;
   VoidCallback onPressedRemover;
   Icon icon;
 
-  ListViewWidget(
+  ListViewWidgetUsuario(
       {@required this.usuario,
         @required this.icon,
         this.onTapItem,

@@ -1,5 +1,5 @@
 import 'package:controle_de_cadastro/config/themes/ThemeDefault.dart';
-import 'package:controle_de_cadastro/models/Usuario.dart';
+import 'package:controle_de_cadastro/models/Usuario/Usuario.dart';
 import 'package:controle_de_cadastro/routes/routes.dart';
 import 'package:controle_de_cadastro/widgets/ButtonWidget.dart';
 import 'package:controle_de_cadastro/widgets/TextFildWidget.dart';
@@ -135,6 +135,7 @@ class _LoginState extends State<Login> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 20),
                   child: ButtonWidget(
+                    corButton: temaPadrao.primaryColor,
                     text: "Logar",
                     onPressed: () {
                       _validarCampos();

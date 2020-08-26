@@ -1,9 +1,10 @@
 import 'dart:io';
+
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:controle_de_cadastro/config/database/Firebase.dart';
 import 'package:controle_de_cadastro/config/themes/ThemeDefault.dart';
-import 'package:controle_de_cadastro/models/Usuario/Usuario.dart';
+import 'package:controle_de_cadastro/models/Viagens/Viagens.dart';
 import 'package:controle_de_cadastro/routes/routes.dart';
 import 'package:controle_de_cadastro/widgets/AlertDialogWidget.dart';
 import 'package:controle_de_cadastro/widgets/ButtonWidget.dart';
@@ -13,14 +14,15 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:validadores/validadores.dart';
+import 'package:validadores/Validador.dart';
 
-class CadastroUsuario extends StatefulWidget {
+class CadastroViagem extends StatefulWidget {
   @override
-  _CadastroUsuarioState createState() => _CadastroUsuarioState();
+  _CadastroViagemState createState() => _CadastroViagemState();
 }
 
-class _CadastroUsuarioState extends State<CadastroUsuario> {
+class _CadastroViagemState extends State<CadastroViagem> {
+  /** instancias **/
   FirebaseStorage _storage = FirebaseStorage.instance;
   Firestore _banco = Firestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -34,12 +36,12 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   /** context global **/
   BuildContext _dialogContext;
 
-  /** obj usuario **/
-  Usuario _usuario = Usuario();
+  /** obj viagem **/
+  Viagens _viagens = Viagens();
 
-  _selecionarImagem() async {
+  _carregaFoto() async {
     File imagemSelecionada =
-        await ImagePicker.pickImage(source: ImageSource.camera);
+    await ImagePicker.pickImage(source: ImageSource.gallery);
 
     if (imagemSelecionada != null) {
       setState(() {
@@ -59,17 +61,17 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
       /** adic no storage **/
       StorageReference arquivo = pastaRaiz
           .child(Firebase.COLECAO_USUARIOS)
-          .child(_usuario.idUsuario)
+          .child(_viagens.idViagem)
           .child(nomeImage);
       /** comeca upload **/
       StorageUploadTask uploadTask = arquivo.putFile(images);
       StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
       String url = await taskSnapshot.ref.getDownloadURL();
-      _usuario.fotos.add(url);
+      _viagens.photos.add(url);
     }
   }
 
-  Future _salvarDadosDoUsuario(String idUsuario) async {
+  Future _salvarDadosDaViagem(String idViagem) async {
     /** recupera usuario logado **/
     FirebaseUser usuarioLoagado = await _auth.currentUser();
     String idUsuario = usuarioLoagado.uid;
@@ -77,12 +79,12 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     _banco
         .collection(Firebase.COLECAO_USUARIOS)
         .document(idUsuario)
-        .collection(Firebase.COLECAO_CONTATOS)
-        .document(_usuario.idUsuario)
-        .setData(_usuario.toMap())
+        .collection(Firebase.COLECAO_VIAGENS)
+        .document(_viagens.idViagem)
+        .setData(_viagens.toMap())
         .then((_) {
-      Navigator.pop(_dialogContext);
-      Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_LISTA_USUARIO);
+      Navigator.of(_dialogContext).pop();
+      Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_ALBUNS_VIAGENS);
     });
   }
 
@@ -106,27 +108,27 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
           );
         });
   }
-  _salvarUsuario() async {
+
+  _salvarAlbum()async{
     _abriDailog(context);
     /** upload das imagens **/
     await _uploadImages();
     /** salva  no banco **/
-    _salvarDadosDoUsuario(_usuario.idUsuario);
+    _salvarDadosDaViagem(_viagens.idViagem);
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _usuario = Usuario.geraId();
+    _viagens = Viagens.geraId();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Novo Usuario',
+          'Novo Album',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -142,7 +144,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                   initialValue: _listaImagens,
                   validator: (images) {
                     if (images.length == 0) {
-                      return 'Necessário ao menos uma imagem';
+                      return 'Necessário ao pelo menos 1 foto';
                     }
                     return null;
                   },
@@ -159,10 +161,10 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                 if (index == _listaImagens.length) {
                                   return Padding(
                                     padding:
-                                        EdgeInsets.symmetric(horizontal: 8),
+                                    EdgeInsets.symmetric(horizontal: 8),
                                     child: GestureDetector(
                                       onTap: () {
-                                        _selecionarImagem();
+                                        _carregaFoto();
                                       },
                                       child: CircleAvatar(
                                         backgroundColor: Colors.grey[500],
@@ -195,23 +197,23 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                                         showDialog(
                                             context: context,
                                             builder: (context) => Dialog(
-                                                  child: Column(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Image.file( _listaImagens[index]),
-                                                      FlatButton(
-                                                        child: Text('Excluir'),
-                                                        textColor: Colors.red,
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            _listaImagens.removeAt(index);
-                                                            Navigator.of(context).pop();
-                                                          });
-                                                        },
-                                                      )
-                                                    ],
-                                                  ),
-                                                ));
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  Image.file( _listaImagens[index]),
+                                                  FlatButton(
+                                                    child: Text('Excluir'),
+                                                    textColor: Colors.red,
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _listaImagens.removeAt(index);
+                                                        Navigator.of(context).pop();
+                                                      });
+                                                    },
+                                                  )
+                                                ],
+                                              ),
+                                            ));
                                       },
                                       child: CircleAvatar(
                                         radius: 50,
@@ -247,9 +249,9 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                   padding: EdgeInsets.only(top: 20),
                   child: TextFildWidget(
                     autofocus: true,
-                    hint: 'Nome',
-                    onSaved: (name) {
-                      _usuario.name = name;
+                    hint: 'Nome do Album',
+                    onSaved: (title) {
+                      _viagens.title = title;
                     },
                     validator: (valor) {
                       return Validador()
@@ -259,76 +261,60 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                   ),
                 ),
                 TextFildWidget(
-                  hint: 'CPF',
-                  onSaved: (cpf) {
-                    _usuario.cpf = cpf;
-                  },
-                  inputTypetype: TextInputType.number,
+                  hint: 'Data de Inicio',
+                  inputTypetype: TextInputType.datetime,
                   inputFormatters: [
                     WhitelistingTextInputFormatter.digitsOnly,
-                    CpfInputFormatter()
+                    DataInputFormatter()
                   ],
+                  onSaved: (dateInit){
+                    _viagens.dateInit = dateInit;
+                  },
                   validator: (valor) {
                     return Validador()
                         .add(Validar.OBRIGATORIO, msg: 'Campo Obrigatorio')
-                        .add(Validar.CPF)
                         .valido(valor);
                   },
                 ),
                 TextFildWidget(
-                  hint: 'Telefone',
-                  onSaved: (phone) {
-                    _usuario.phone = phone;
-                  },
-                  inputTypetype: TextInputType.phone,
+                  hint: 'Data de Termino',
+                  inputTypetype: TextInputType.datetime,
                   inputFormatters: [
                     WhitelistingTextInputFormatter.digitsOnly,
-                    TelefoneInputFormatter()
+                    DataInputFormatter()
                   ],
+                  onSaved: (dateEnd){
+                    _viagens.dateEnd = dateEnd;
+                  },
                   validator: (valor) {
                     return Validador()
-                        .add(Validar.OBRIGATORIO, msg: 'Campo Obrigatorio')
                         .valido(valor);
                   },
                 ),
                 TextFildWidget(
-                  hint: 'E-mail',
-                  onSaved: (emial) {
-                    _usuario.email = emial;
+                  hint: 'Descrição da Viagem (200 caracteres)',
+                  inputTypetype: TextInputType.multiline,
+                  onSaved: (description) {
+                    _viagens.description = description;
                   },
-                  inputTypetype: TextInputType.emailAddress,
                   validator: (valor) {
                     return Validador()
                         .add(Validar.OBRIGATORIO, msg: 'Campo Obrigatorio')
-                        .add(Validar.EMAIL)
-                        .valido(valor);
-                  },
-                ),
-                TextFildWidget(
-                  obscure: true,
-                  hint: 'Senha',
-                  inputFormatters: [],
-                  onSaved: (password) {
-                    _usuario.password = password;
-                  },
-                  inputTypetype: TextInputType.visiblePassword,
-                  validator: (valor) {
-                    return Validador()
-                        .add(Validar.OBRIGATORIO, msg: 'Campo Obrigatorio')
+                        .maxLength(200, msg: 'Maximo 200 caracteres')
                         .valido(valor);
                   },
                 ),
                 ButtonWidget(
-                  text: 'Cadastra Usuario',
-                  corButton: temaPadrao.primaryColor,
+                  text: 'Cadastra Album',
+                  corButton: temaViagen.primaryColor,
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       /** salva dados do form **/
                       _formKey.currentState.save();
                       /** configura o context do dialog**/
                       _dialogContext = context;
-                      /** salva o usuario **/
-                      _salvarUsuario();
+                      /** salva **/
+                      _salvarAlbum();
                     }
                   },
                 )
