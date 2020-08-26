@@ -2,6 +2,7 @@ import 'package:controle_de_cadastro/config/themes/ThemeDefault.dart';
 import 'package:controle_de_cadastro/routes/routes.dart';
 import 'package:controle_de_cadastro/widgets/CardWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Cadastros extends StatefulWidget {
@@ -23,38 +24,66 @@ class _CadastrosState extends State<Cadastros> {
         decoration: BoxDecoration(gradient: gradientDefault),
         child: Padding(
           padding: EdgeInsets.all(8),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              CardWidget(
-                icon: Icon(
-                  Icons.person_add,
-                  size: 90,
-                  color: Colors.blue,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                CardWidget(
+                  icon: Icon(
+                    Icons.person_add,
+                    size: 90,
+                    color: Colors.blue,
+                  ),
+                  title: 'Cadastro de Usuário',
+                  subTitle:
+                      'Esse e um exemplo de cadastro de usuário com validações, '
+                      'com imagens da camera, '
+                      'e a possibilidade de fazer ligação',
+                  onTapItem: () {
+                    Navigator.pushReplacementNamed(
+                        context, RouteGenerate.ROTA_LISTA_USUARIO);
+                  },
                 ),
-                title: 'Cadastro de Usuário',
-                subTitle:
-                    'Esse e um exemplo de cadastro de usuário com validações, '
-                    'com imagens da camera, '
-                    'e a possibilidade de fazer ligação',
-                onTapItem: () {
-                  Navigator.pushReplacementNamed(
-                      context, RouteGenerate.ROTA_LISTA_USUARIO);
-                },
-              ),
-              CardWidget(
-                icon: Icon(
-                  Icons.photo_album,
-                  size: 90,
-                  color: Colors.blue,
+                CardWidget(
+                  icon: Icon(
+                    Icons.photo_album,
+                    size: 90,
+                    color: Colors.blue,
+                  ),
+                  title: 'Album Viagens',
+                  subTitle: 'Monta um carrosel com as imagens selecionadas, '
+                      'como tambem detalhes de como foi a viagem',
+                  onTapItem: (){
+                    Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_ALBUNS_VIAGENS);
+                  },
                 ),
-                title: 'Album Viagens',
-                subTitle: 'com Validações',
-                onTapItem: (){
-                  Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_ALBUNS_VIAGENS);
-                },
-              ),
-            ],
+                CardWidget(
+                  icon: Icon(
+                    Icons.location_on,
+                    size: 90,
+                    color: Colors.blue,
+                  ),
+                  title: 'Localização',
+                  subTitle: 'Pega sua localição ataul, e acordo com a pesquisa'
+                      ' mostra o trajeto',
+                  onTapItem: (){
+                    Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_ALBUNS_VIAGENS);
+                  },
+                ),
+                CardWidget(
+                  icon: Icon(
+                    Icons.list,
+                    size: 90,
+                    color: Colors.blue,
+                  ),
+                  title: 'Anotações',
+                  subTitle: 'Lista de anotações com banco de dados local',
+                  onTapItem: (){
+                    Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_ANOTACOES);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

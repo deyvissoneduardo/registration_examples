@@ -56,6 +56,16 @@ class _ListaUsuarioState extends State<ListaUsuario> {
     }
   }
 
+  _remover(String idUsuairo) {
+    _banco
+        .collection(Firebase.COLECAO_USUARIOS)
+        .document(_idUsuario)
+        .collection(Firebase.COLECAO_CONTATOS)
+        .document(idUsuairo)
+        .delete();
+    print('passou aqui***********');
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -102,22 +112,46 @@ class _ListaUsuarioState extends State<ListaUsuario> {
                           querySnapshot.documents.toList();
                       /** pega pelo index **/
                       DocumentSnapshot documentSnapshot = usuarios[index];
-
                       /** muda para tipo snapshot **/
-                      Usuario usuario =
+                      Usuario usuarioSnapshot =
                           Usuario.fromDocumentsSnapshot(documentSnapshot);
 
-                      return ListViewWidgetUsuario(
-                        usuario: usuario,
-                        icon: Icon(
-                          Icons.phone,
-                          size: 35,
-                          color: Colors.blue,
-                        ),
-                        onPressedRemover: () {
-                          _ligarTelefone(usuario.phone);
+                      return Dismissible(
+                        key: Key( DateTime.now().millisecondsSinceEpoch.toString() ),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (direction) {
+                          /** remove item da lista **/
+                          _remover(_idUsuario);
+                          usuarios.removeAt(index);
+                          final snackbar = SnackBar(
+                          duration: Duration(seconds: 3),
+                          content: Text('Conteudo removido'),
+                          );
+                          Scaffold.of(context).showSnackBar(snackbar);
                         },
-                      );
+                        background: Container(
+                            color: Colors.red,
+                            padding: EdgeInsets.all(16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            )),
+                        child: ListViewWidgetUsuario(
+                          usuario: usuarioSnapshot,
+                          icon: Icon(
+                            Icons.phone,
+                            size: 35,
+                            color: Colors.blue,
+                          ),
+                          onPressedRemover: () {
+                            _ligarTelefone(usuarioSnapshot.phone);
+                          },
+                        ),);
                     });
             }
             return Container();

@@ -1,3 +1,4 @@
+import 'package:controle_de_cadastro/views/Anotacao/Anotacoes.dart';
 import 'package:controle_de_cadastro/views/Cadastros.dart';
 import 'package:controle_de_cadastro/views/Login/Login.dart';
 import 'package:controle_de_cadastro/views/Usuario/ListaUsuario.dart';
@@ -16,6 +17,7 @@ class RouteGenerate {
   static const String ROTA_ALBUNS_VIAGENS = '/AlbunsViagens';
   static const String ROTA_CADASTRO_VIAGEM = '/CadastroViagem';
   static const String ROTA_DETALHES_VIAGEM = '/DetalhesViagens';
+  static const String ROTA_ANOTACOES = '/Anotacoes';
 
   static Route<dynamic> genetareRoutes(RouteSettings settings) {
     final args = settings.arguments;
@@ -39,6 +41,9 @@ class RouteGenerate {
         return MaterialPageRoute(builder: (_) => AlbunsViagens());
       case ROTA_DETALHES_VIAGEM:
         return MaterialPageRoute(builder: (_) => DetalhesViagens(args));
+        /** anotacao **/
+      case ROTA_ANOTACOES:
+        return MaterialPageRoute(builder: (_) => Anotacoes());
       default:
         _erroRota();
     }

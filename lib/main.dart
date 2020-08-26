@@ -7,7 +7,7 @@ import 'config/themes/ThemeDefault.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    title: 'OLX Clone',
+    title: '',
     home: Login(),
     initialRoute: RouteGenerate.ROTA_LOGIN,
     onGenerateRoute: RouteGenerate.genetareRoutes,
