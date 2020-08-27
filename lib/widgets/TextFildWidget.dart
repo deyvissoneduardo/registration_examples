@@ -11,7 +11,7 @@ class TextFildWidget extends StatelessWidget {
   final int maxLines;
   final Function(String) validator;
   final Function(String) onSaved;
-
+  final Icon icon;
   TextFildWidget(
       {@required this.controller,
         @required this.hint,
@@ -21,7 +21,8 @@ class TextFildWidget extends StatelessWidget {
         this.inputFormatters,
         this.maxLines = 1,
         this.validator,
-        this.onSaved});
+        this.onSaved,
+      this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +38,7 @@ class TextFildWidget extends StatelessWidget {
         maxLines: this.maxLines,
         onSaved: this.onSaved,
         decoration: InputDecoration(
+          icon: this.icon,
             contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             hintText: this.hint,

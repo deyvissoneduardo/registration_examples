@@ -45,6 +45,13 @@ class Usuario {
     return map;
   }
 
+  /** map para registro de usuario **/
+  Map<String, dynamic> toMapRegistro() {
+    /** criando o map **/
+    Map<String, dynamic> map = {"nome": this.name, "email": this.email};
+    return map;
+  }
+
   /** getrs e setrs **/
 
   List get fotos => _fotos;

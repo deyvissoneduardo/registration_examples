@@ -11,6 +11,26 @@ class Cadastros extends StatefulWidget {
 }
 
 class _CadastrosState extends State<Cadastros> {
+  /** recupera a instancia **/
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  /** cria lista de menu **/
+  List<String> itemMenu = ["Deslogar"];
+
+  _escolhaMenuItem(String itemEscolhido) {
+    //print(itemEscolhido);
+    switch( itemEscolhido ){
+      case "Deslogar":
+        _deslogarUsuario();
+        break;
+    }
+  }
+
+  _deslogarUsuario() async {
+    await _auth.signOut();
+    Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_LOGIN);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,6 +39,20 @@ class _CadastrosState extends State<Cadastros> {
           'Cadastros',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: _escolhaMenuItem,
+            itemBuilder: (context) {
+              /** constroi a lista de menu **/
+              return itemMenu.map((String item) {
+                return PopupMenuItem<String>(
+                  value: item,
+                  child: Text(item),
+                );
+              }).toList();
+            },
+          )
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(gradient: gradientDefault),
@@ -67,7 +101,7 @@ class _CadastrosState extends State<Cadastros> {
                   subTitle: 'Pega sua localição ataul, e acordo com a pesquisa'
                       ' mostra o trajeto',
                   onTapItem: (){
-                    Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_ALBUNS_VIAGENS);
+                    Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_LOCALIZACOES);
                   },
                 ),
                 CardWidget(

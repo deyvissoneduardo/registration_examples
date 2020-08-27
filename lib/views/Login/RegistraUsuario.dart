@@ -1,75 +1,114 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:controle_de_cadastro/config/database/Firebase.dart';
 import 'package:controle_de_cadastro/config/themes/ThemeDefault.dart';
 import 'package:controle_de_cadastro/models/Usuario/Usuario.dart';
 import 'package:controle_de_cadastro/routes/routes.dart';
-import 'package:controle_de_cadastro/views/Login/Sing_in_Goolgle.dart';
 import 'package:controle_de_cadastro/widgets/ButtonWidget.dart';
 import 'package:controle_de_cadastro/widgets/TextFildWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:validadores/validadores.dart';
+import 'package:validadores/Validador.dart';
 
-class Login extends StatefulWidget {
+class RegistraUsuario extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _RegistraUsuarioState createState() => _RegistraUsuarioState();
 }
 
-class _LoginState extends State<Login> {
+class _RegistraUsuarioState extends State<RegistraUsuario> {
   /** controladores **/
+  TextEditingController _controllerName = TextEditingController();
   TextEditingController _controllerEmail = TextEditingController();
   TextEditingController _controllerPassword = TextEditingController();
 
+  /** instacia**/
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  Firestore _banco = Firestore.instance;
   Usuario _usuario = Usuario();
 
   /** mensagens padrao **/
   String _mensageError = '';
 
-  /** instacia do firebase **/
-  FirebaseAuth _auth = FirebaseAuth.instance;
-
-  Future _verificaUsuarioLogado() async {
-    /** recupera usuario logado **/
-    FirebaseUser usuarioLogado = await _auth.currentUser();
-    if (usuarioLogado == null) {
-      Navigator.pushNamed(context, RouteGenerate.ROTA_LOGIN);
-    } else {
-      Navigator.pushNamed(context, RouteGenerate.ROTA_CADASTROS);
-    }
-  }
-
   /** valida os campos **/
   _validarCampos() {
     /** recupera valores digitados **/
+    String name = _controllerName.text;
     String email = _controllerEmail.text;
     String password = _controllerPassword.text;
 
     /** verifica se os texto sao validos **/
-    if (email.isNotEmpty && email.contains('@')) {
-      if (password.isNotEmpty && password.length > 6) {
-        /** configura usuario **/
-        _usuario.email = email;
-        _usuario.password = password;
-        _logarUsuario(_usuario);
+    /** valida os dados **/
+    if (name.isNotEmpty) {
+      if (email.isNotEmpty && email.contains("@")) {
+        if (password.isNotEmpty && password.length > 6) {
+          setState(() {
+            _mensageError = "";
+          });
+          /** config usurio**/
+          _usuario.name = name;
+          _usuario.email = email;
+          _usuario.password = password;
+          _cadastraUsuario(_usuario);
+        } else {
+          setState(() {
+            _mensageError = "Senha deve ter no minimo 8 caracteres";
+          });
+        }
       } else {
         setState(() {
-          _mensageError = 'Senha Invalida e/ou minimo de 7 caracteres';
+          _mensageError = "E-mail obrigatorio";
         });
       }
     } else {
       setState(() {
-        _mensageError = 'Favor Digite e-mail valido';
+        _mensageError = 'Preencha o nome';
       });
     }
   }
 
-  _logarUsuario(Usuario usuario) {
+  _abriDailog(BuildContext context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                CircularProgressIndicator(
+                  backgroundColor: temaPadrao.primaryColor,
+                ),
+                SizedBox(height: 20),
+                Text('Salvando...')
+              ],
+            ),
+          );
+        });
+  }
+
+  _cadastraUsuario(Usuario usuario) async {
+    FirebaseUser idUsuarioFirebase = await _auth.currentUser();
+    String idUsuario = idUsuarioFirebase.uid;
+
     _auth
-        .signInWithEmailAndPassword(
+        .createUserWithEmailAndPassword(
             email: usuario.email, password: usuario.password)
-        .then((firabaseUser) {
-      /** redireciona tela principal **/
-      Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_CADASTROS);
+        .then((firebaseUser) {
+      /** salva os dados no firebase **/
+      _banco
+          .collection(Firebase.COLECAO_USUARIOS)
+          .document(idUsuario)
+          .collection(Firebase.COLECAO_REGISTRO)
+          .document(_usuario.idUsuario)
+          .setData(usuario.toMapRegistro())
+          .then((_) {
+        _abriDailog(context);
+        Navigator.pushNamedAndRemoveUntil(
+            context, RouteGenerate.ROTA_CADASTROS, (_) => false);
+      });
+    }).catchError((error) {
+      setState(() {
+        _mensageError = "Error ao cadastra!!";
+      });
     });
   }
 
@@ -77,7 +116,7 @@ class _LoginState extends State<Login> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // _verificaUsuarioLogado();
+    _usuario = Usuario.geraId();
   }
 
   @override
@@ -101,16 +140,32 @@ class _LoginState extends State<Login> {
                     size: 150,
                   ),
                 ),
+                /** feld name **/
+                TextFildWidget(
+                  controller: _controllerName,
+                  autofocus: true,
+                  icon: Icon(Icons.person),
+                  hint: 'Nome',
+                  onSaved: (name) {
+                    _usuario.name = name;
+                  },
+                  inputFormatters: [],
+                  validator: (valor) {
+                    return Validador()
+                        .add(Validar.OBRIGATORIO, msg: 'Campo Obrigatorio')
+                        .valido(valor);
+                  },
+                ),
                 /** fiel e-email **/
                 TextFildWidget(
                   controller: _controllerEmail,
                   icon: Icon(Icons.email),
-                  autofocus: true,
                   hint: 'E-mail',
                   onSaved: (email) {
                     _usuario.email = email;
                   },
                   inputTypetype: TextInputType.emailAddress,
+                  inputFormatters: [],
                   validator: (valor) {
                     return Validador()
                         .add(Validar.OBRIGATORIO, msg: 'Campo Obrigatorio')
@@ -121,8 +176,8 @@ class _LoginState extends State<Login> {
                 /** field password **/
                 TextFildWidget(
                   controller: _controllerPassword,
-                  icon: Icon(Icons.security, color: temaPadrao.primaryColor,),
                   obscure: true,
+                  icon: Icon(Icons.security),
                   hint: 'Senha',
                   onSaved: (password) {
                     _usuario.password = password;
@@ -139,29 +194,9 @@ class _LoginState extends State<Login> {
                   padding: EdgeInsets.only(bottom: 20),
                   child: ButtonWidget(
                     corButton: temaPadrao.primaryColor,
-                    text: "Logar",
+                    text: "Cadastrar",
                     onPressed: () {
                       _validarCampos();
-                    },
-                  ),
-                ),
-                /** btn google **/
-                Padding(
-                  padding: EdgeInsets.only(bottom: 20),
-                  child: _signInButton(context)
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 150),
-                  child: GestureDetector(
-                    child: Center(
-                      child: Text('Não tem conta? cadastre-se',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white
-                      ),),
-                    ),
-                    onTap: (){
-                      Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_REGISTRA_USUARIO);
                     },
                   ),
                 ),
@@ -182,39 +217,4 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-}
-
-Widget _signInButton(BuildContext context) {
-  return OutlineButton(
-    splashColor: temaPadrao.primaryColor,
-    onPressed: () {
-      signInWithGoogle().whenComplete(() {
-        Navigator.pushReplacementNamed(context, RouteGenerate.ROTA_CADASTROS);
-      });
-    },
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    highlightElevation: 0,
-    borderSide: BorderSide(color: temaPadrao.primaryColor),
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image(image: AssetImage("images/google_logo.png"), height: 35),
-          Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: Text(
-              'Logar com Google',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.bold
-              ),
-            ),
-          )
-        ],
-      ),
-    ),
-  );
 }

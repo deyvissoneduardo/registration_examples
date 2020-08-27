@@ -4,6 +4,7 @@ class Firebase{
 
   /** colecoes **/
   static final String COLECAO_USUARIOS = 'usuarios';
+  static final String COLECAO_REGISTRO = 'registro';
   static final String COLECAO_CONTATOS = 'contatos';
   static final String COLECAO_VIAGENS = 'viagens';
 

@@ -1,6 +1,8 @@
 import 'package:controle_de_cadastro/views/Anotacao/Anotacoes.dart';
 import 'package:controle_de_cadastro/views/Cadastros.dart';
+import 'package:controle_de_cadastro/views/Localizacao/Localizacoes.dart';
 import 'package:controle_de_cadastro/views/Login/Login.dart';
+import 'package:controle_de_cadastro/views/Login/RegistraUsuario.dart';
 import 'package:controle_de_cadastro/views/Usuario/ListaUsuario.dart';
 import 'package:controle_de_cadastro/views/Usuario/CadastroUsuario.dart';
 import 'package:controle_de_cadastro/views/Viagens/AlbunsViagens.dart';
@@ -11,12 +13,14 @@ import 'package:flutter/material.dart';
 class RouteGenerate {
   static const String ROTA_HOME = '/';
   static const String ROTA_LOGIN = '/Login';
+  static const String ROTA_REGISTRA_USUARIO = '/RegistraUsuario';
   static const String ROTA_CADASTROS = '/Cadastros';
   static const String ROTA_CADASTRO_USUARIO = '/CadastroUsuario';
   static const String ROTA_LISTA_USUARIO = '/ListaUsuario';
   static const String ROTA_ALBUNS_VIAGENS = '/AlbunsViagens';
   static const String ROTA_CADASTRO_VIAGEM = '/CadastroViagem';
   static const String ROTA_DETALHES_VIAGEM = '/DetalhesViagens';
+  static const String ROTA_LOCALIZACOES = '/Localizacoes';
   static const String ROTA_ANOTACOES = '/Anotacoes';
 
   static Route<dynamic> genetareRoutes(RouteSettings settings) {
@@ -27,6 +31,8 @@ class RouteGenerate {
         return MaterialPageRoute(builder: (_) => Login());
       case ROTA_LOGIN:
         return MaterialPageRoute(builder: (_) => Login());
+      case ROTA_REGISTRA_USUARIO:
+        return MaterialPageRoute(builder: (_) => RegistraUsuario());
       case ROTA_CADASTROS:
         return MaterialPageRoute(builder: (_) => Cadastros());
       /** usuario **/
@@ -41,6 +47,9 @@ class RouteGenerate {
         return MaterialPageRoute(builder: (_) => AlbunsViagens());
       case ROTA_DETALHES_VIAGEM:
         return MaterialPageRoute(builder: (_) => DetalhesViagens(args));
+        /** localizacao **/
+      case ROTA_LOCALIZACOES:
+        return MaterialPageRoute(builder: (_) => Localizacoes());
         /** anotacao **/
       case ROTA_ANOTACOES:
         return MaterialPageRoute(builder: (_) => Anotacoes());
